@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
 import PT from 'prop-types'
+import axios from 'axios'
 
 export default function Articles(props) {
   // ✨ where are my props? Destructure them here
-
+  prop = {articles}
   // ✨ implement conditional logic: if no token exists
   // we should render a Navigate to login screen (React Router v.6)
 
