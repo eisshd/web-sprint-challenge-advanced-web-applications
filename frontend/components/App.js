@@ -6,6 +6,7 @@ import Message from './Message'
 import ArticleForm from './ArticleForm'
 import Spinner from './Spinner'
 import axios from 'axios'
+import axiosWithAuth from '../axios'
 
 const articlesUrl = 'http://localhost:9000/api/articles'
 const loginUrl = 'http://localhost:9000/api/login'
@@ -19,25 +20,18 @@ export default function App() {
 
   // ✨ Research `useNavigate` in React Router v.6
   const navigate = useNavigate()
-  const redirectToLogin = () => { navigate('/login') }
-  const redirectToArticles = () => { navigate('/articles') }
+  const redirectToLogin = () => { navigate(loginUrl) }
+  const redirectToArticles = () => { navigate(articlesUrl) }
 
   const logout = () => {
     // ✨ implement
-    const token = localStorage.getItem('token')
-        axios.post('http://localhost:9000/api/login', {}, {
-            headers: {
-                authorization: token
-            }
-        })
     // If a token is in local storage it should be removed,
-    .then (res => {
-      localStorage.removeItem('token')
+     
+     localStorage.removeItem('token')
     // and a message saying "Goodbye!" should be set in its proper state. 
-      setMessage('Goodbye!')
+     setMessage('Goodbye!')
     // In any case, we should redirect the browser back to the login screen, using the helper above.
       redirectToLogin
-  })
 }
 
   const login = ({ username, password }) => {
@@ -117,8 +111,8 @@ export default function App() {
           <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="/articles" element={
             <>
-              <ArticleForm />
-              <Articles />
+              <ArticleForm postArticle={postArticle} updateArticle={updateArticle} setCurrentArticleId={setCurrentArticleId}/>
+              <Articles getArticles={getArticles} deleteArticle={deleteArticle} articles={articles} setCurrentArticleId={setCurrentArticleId}/>
             </>
           } />
         </Routes>

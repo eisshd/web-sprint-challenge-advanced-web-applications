@@ -5,13 +5,20 @@ import axios from 'axios'
 
 export default function Articles(props) {
   // ✨ where are my props? Destructure them here
-  prop = {articles}
+  
   // ✨ implement conditional logic: if no token exists
   // we should render a Navigate to login screen (React Router v.6)
+  const redirectToLogin = {
+    
+  } 
 
   useEffect(() => {
     // ✨ grab the articles here, on first render only
   })
+
+  const onClick = {
+    
+  }
 
   return (
     // ✨ fix the JSX: replace `Function.prototype` with actual functions
@@ -30,8 +37,8 @@ export default function Articles(props) {
                   <p>Topic: {art.topic}</p>
                 </div>
                 <div>
-                  <button disabled={true} onClick={Function.prototype}>Edit</button>
-                  <button disabled={true} onClick={Function.prototype}>Delete</button>
+                  <button disabled={true} onClick={onClick}>Edit</button>
+                  <button disabled={true} onClick={onClick}>Delete</button>
                 </div>
               </div>
             )
