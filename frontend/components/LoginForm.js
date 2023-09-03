@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import PT from 'prop-types'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
+import axiosWithAuth from '../axios'
 
 const initialFormValues = {
   username: '',
@@ -16,17 +17,18 @@ export default function LoginForm(props) {
   const onChange = evt => {
     const { id, value } = evt.target
     setValues({ ...values, [id]: value.trim() })
-    console.log(values)
   }
 
   const onSubmit = evt => {
     evt.preventDefault()
     // ✨ implement
-    axios.post('http://localhost:9000/api/login' , values)
+    axiosWithAuth().post('/login', values)
     .then(res => {
-      localStorage.setItem('token', res.data.payload)
+      localStorage.setItem('token', res.data.token)
+      console.log('LoginForm onSubmit', res)
       navigate(`/articles`)
     })
+    .catch(err => {console.log(err)})
   }
 
   const isDisabled = () => {
