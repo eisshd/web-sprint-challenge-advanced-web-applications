@@ -38,24 +38,25 @@ export default function App() {
 
   const login = ({ username, password }) => {
     // ✨ implement
+    // We should flush the message state,
+    // turn on the spinner,
+    // and launch a request to the proper endpoint.
+    // On success, we should set the token to local storage in a 'token' key,
+    // put the server success message in its proper state,
+    // and redirect to the Articles screen. 
+    // Don't forget to turn off the spinner!
     console.log('login')
     const login = {username, password}
-    // We should flush the message state,
     setMessage('')
-    // turn on the spinner,
     setSpinnerOn(true)
-    // and launch a request to the proper endpoint.
     axiosWithAuth().post('/login', login)
-    // On success, we should set the token to local storage in a 'token' key,
     .then(res => {
       localStorage.setItem('token', res.data.token)  
-    // put the server success message in its proper state,
       setMessage(res.data.message)
-    // and redirect to the Articles screen. 
       redirectToArticles()
-    // Don't forget to turn off the spinner!
       setSpinnerOn(false)
     })
+    .catch(err => console.log(err))
   }
 
   const getArticles = () => {

@@ -12,10 +12,8 @@ const initialFormValues = {
 export default function LoginForm(props) {
   const [values, setValues] = useState(initialFormValues)
   const navigate = useNavigate()
-  const [message, setMessage] = useState('')
-  const [spinnerOn, setSpinnerOn] = useState(false)
   // ✨ where are my props? Destructure them here
-  props = {values, message, spinnerOn}
+  props = {values}
 
   const onChange = evt => {
     const { id, value } = evt.target
@@ -30,7 +28,6 @@ export default function LoginForm(props) {
       localStorage.setItem('token', res.data.token)
       console.log('LoginForm onSubmit', res)
       navigate(`/articles`)
-      console.log('login - onSubmit', message, spinnerOn)
     })
     .catch(err => {console.log(err)})
   }
