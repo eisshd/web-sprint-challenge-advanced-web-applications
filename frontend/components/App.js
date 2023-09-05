@@ -32,8 +32,7 @@ export default function App() {
      localStorage.removeItem('token')
      setMessage('Goodbye!')
      redirectToLogin()
-     setMessage('')
-     console.log(localStorage)
+     console.log("logout")
 
   }
 
@@ -46,11 +45,10 @@ export default function App() {
     // turn on the spinner,
     setSpinnerOn(true)
     // and launch a request to the proper endpoint.
-    axiosWithAuth().post(loginUrl, login)
+    axiosWithAuth().post('/login', login)
     // On success, we should set the token to local storage in a 'token' key,
     .then(res => {
-      localStorage.setItem('token', res.data.token)
-      console.log('login function', localStorage.token)   
+      localStorage.setItem('token', res.data.token)  
     // put the server success message in its proper state,
       setMessage(res.data.message)
     // and redirect to the Articles screen. 

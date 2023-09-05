@@ -2,13 +2,18 @@ import React, { useEffect, useState } from 'react'
 import PT from 'prop-types'
 import axios from 'axios'
 import axiosWithAuth from '../axios'
+import { useNavigate } from 'react-router-dom'
 
 const initialFormValues = { title: '', text: '', topic: '' }
 
 export default function ArticleForm(props) {
   const [values, setValues] = useState(initialFormValues)
+  const [currentArticle, setCurrentArticle] = useState([])
+  const navigate = useNavigate()
+  const redirectToLogin = () => { navigate('/') }
+  const redirectToArticles = () => { navigate('/articles') }
   // ✨ where are my props? Destructure them here
-  props = {values}  
+  props = {values, currentArticle}
   useEffect(() => {
     // ✨ implement
     // Every time the `currentArticle` prop changes, we should check it for truthiness:
@@ -19,26 +24,30 @@ export default function ArticleForm(props) {
   const onChange = evt => {
     const { id, value } = evt.target
     setValues({ ...values, [id]: value })
+    console.log(values)
   }
 
   const onSubmit = evt => {
-    evt.preventDefault()
     // ✨ implement
-    console.log('onSubmit', values.title, values.text, values.topic)
     // We must submit a new post or update an existing one,
+    axiosWithAuth().post('/articles', values)
+         .then(res => {
+          res.data.article
+          setValues(initialFormValues)
+        })
     // depending on the truthyness of the `currentArticle` prop.
   }
 
   const isDisabled = () => {
     // ✨ implement
     // Make sure the inputs have some values
-    if(values.title === '' && values.text === '' && values.topic === ''){
+    if (values.title === '' || values.text === '' || values.topic === ''){
       return true
-    } return false
+    } else return false
   }
 
   const onClick = () => {
-
+      setValues(initialFormValues)
   } 
 
   return (
@@ -67,7 +76,7 @@ export default function ArticleForm(props) {
         <option value="Node">Node</option>
       </select>
       <div className="button-group">
-        <button disabled={isDisabled} id="submitArticle">Submit</button>
+        <button disabled={isDisabled()} id="submitArticle">Submit</button>
         <button onClick={onClick}>Cancel edit</button>
       </div>
     </form>

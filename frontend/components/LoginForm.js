@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import axiosWithAuth from '../axios'
 
+
 const initialFormValues = {
   username: '',
   password: '',
@@ -11,8 +12,10 @@ const initialFormValues = {
 export default function LoginForm(props) {
   const [values, setValues] = useState(initialFormValues)
   const navigate = useNavigate()
+  const [message, setMessage] = useState('')
+  const [spinnerOn, setSpinnerOn] = useState(false)
   // ✨ where are my props? Destructure them here
-  props = {values}
+  props = {values, message, spinnerOn}
 
   const onChange = evt => {
     const { id, value } = evt.target
@@ -27,6 +30,7 @@ export default function LoginForm(props) {
       localStorage.setItem('token', res.data.token)
       console.log('LoginForm onSubmit', res)
       navigate(`/articles`)
+      console.log('login - onSubmit', message, spinnerOn)
     })
     .catch(err => {console.log(err)})
   }

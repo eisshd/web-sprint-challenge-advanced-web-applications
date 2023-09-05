@@ -12,28 +12,43 @@ export default function Articles(props) {
   // ✨ implement conditional logic: if no token exists
   // we should render a Navigate to login screen (React Router v.6)
   const navigate = useNavigate()
-  const loginUrl = 'http://localhost:9000/api/login'
-  const redirectToLogin = () => { navigate(loginUrl) }
+  const redirectToLogin = () => { navigate('/') }
+  const redirectToArticles = () => { navigate('/articles') }
 
   useEffect(() => {
     // ✨ grab the articles here, on first render only
     axiosWithAuth()
     .get('/articles')
     .then(res => {
-      console.log('Articles - useEffect - success', res)
+      console.log('Articles - useEffect - success')
       setArticles(res.data.articles)
     })
     .catch(err => {
-      console.log('Articles - useEffect - failure', err)
+      console.log('Articles - useEffect - failure')
+      redirectToLogin
     })
   }, [])
 
-  const onClickEdit = (e) => {
-    
+  const onClickEdit = (article_id, topic) => {
+    axiosWithAuth().put(`http://localhost:9000/api/articles/${article_id}`, topic)
+         .then(res => {
+          console.log(res)
+        })
+         .catch(err => {
+          console.log(err)
+        })
   }
 
-  const onClickDelete = (e) => {
-    
+  const onClickDelete = (id) => {
+    axiosWithAuth().delete(`http://localhost:9000/api/articles/${id}`)
+                   .then(res => {
+                    console.log(res)
+                    window.location.reload()
+                  })
+                   .catch(err => {
+                    console.log(err.response.data.message)
+                    window.location.reload()
+                  })
   }
 
   return (
@@ -53,8 +68,8 @@ export default function Articles(props) {
                   <p>Topic: {art.topic}</p>
                 </div>
                 <div>
-                  <button disabled={true} onClick={onClickEdit}>Edit</button>
-                  <button disabled={true} onClick={onClickDelete}>Delete</button>
+                  <button disabled={false} onClick={e => onClickEdit(art.article_id, art.topic)}>Edit</button>
+                  <button disabled={false} onClick={e => onClickDelete(art.article_id)}>Delete</button>
                 </div>
               </div>
             )
