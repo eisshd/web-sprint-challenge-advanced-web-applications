@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { NavLink, Routes, Route, useNavigate } from 'react-router-dom'
+import { NavLink, Routes, Route, useNavigate, useParams } from 'react-router-dom'
 import Articles from './Articles'
 import LoginForm from './LoginForm'
 import Message from './Message'
@@ -18,7 +18,7 @@ export default function App() {
   const [articles, setArticles] = useState([])
   const [currentArticleId, setCurrentArticleId] = useState()
   const [spinnerOn, setSpinnerOn] = useState(false)
-
+  const [currentArticle, setCurrentArticle] = useState()
   // ✨ Research `useNavigate` in React Router v.6
   const navigate = useNavigate()
   const redirectToLogin = () => { navigate('/') }
@@ -71,17 +71,18 @@ export default function App() {
     // Don't forget to turn off the spinner!
     setMessage('')
     setSpinnerOn(true)
-    axiosWithAuth.get(articlesUrl)
+    axiosWithAuth().get('/articles')
     .then(res => {
-      console.log('getArticles', res)
-    setArticles([])  
+    console.log('getArticles')
+    setArticles(res.data.articles)  
     setMessage(res.data.message)
     })
-    .catch(res => {
-    if(res.data.message === '401'){
-      return redirectToLogin
-    }})
+    .catch(err => {
+      redirectToLogin()
+      setMessage(err.response.data.message)
+    })
     setSpinnerOn(false)
+    
   }
 
   const postArticle = article => {
@@ -89,18 +90,44 @@ export default function App() {
     // The flow is very similar to the `getArticles` function.
     // You'll know what to do! Use log statements or breakpoints
     // to inspect the response from the server.
-
-
+    setMessage('')
+    setSpinnerOn(true)
+    axiosWithAuth().post('/articles', article)
+    .then(res => {
+    console.log('postArticle')
+    setArticles(res.data.articles)  
+    setMessage(res.data.message)
+    setSpinnerOn(false)
+    })
+    .catch(err => {
+      console.log(err)
+    })
   }
 
   const updateArticle = ({ article_id, article }) => {
     // ✨ implement
     // You got this!
-
-  }
+    axiosWithAuth().put(`/articles/${article_id}`, article)
+    .then(res => {
+      setCurrentArticle(res.data)
+    })
+  //   axiosWithAuth().put(`/articles/${id}`, currentArticle)
+  //   .then(res => {
+  //    setCurrentArticle(res.data)
+  //    console.log(res.data)
+  //  })
+  //   .catch(err => console.log(err))
+}
 
   const deleteArticle = article_id => {
     // ✨ implement
+    axiosWithAuth().delete(`/articles/${article_id}`)
+      .then(res => {
+        setMessage(res.data.message)
+      })
+      .catch(err => {
+        console.log(err.response.data.message)
+      })
   }
 
   return (
@@ -119,8 +146,28 @@ export default function App() {
           <Route path="/" element={<LoginForm login={login}/>} />
           <Route exact path="/articles" element={
             <PrivateRoute>
-              <ArticleForm postArticle={postArticle} updateArticle={updateArticle} setCurrentArticleId={setCurrentArticleId}/>
-              <Articles getArticles={getArticles} deleteArticle={deleteArticle} articles={articles} setCurrentArticleId={setCurrentArticleId}/>
+
+              <ArticleForm 
+              postArticle={postArticle} 
+              updateArticle={updateArticle} 
+              setCurrentArticleId={setCurrentArticleId} 
+              currentArticleId={currentArticleId}
+              articles={articles}
+              setArticles={setArticles}
+              setCurrentArticle={setCurrentArticle} 
+              currentArticle={currentArticle}
+              />
+
+              <Articles getArticles={getArticles} 
+              deleteArticle={deleteArticle} 
+              articles={articles}
+              setArticles={setArticles}
+              setCurrentArticleId={setCurrentArticleId} 
+              currentArticleId={currentArticleId}
+              setCurrentArticle={setCurrentArticle} 
+              currentArticle={currentArticle}
+              />
+
             </PrivateRoute>
           } />
         </Routes>

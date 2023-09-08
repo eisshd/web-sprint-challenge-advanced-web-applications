@@ -13,7 +13,7 @@ export default function LoginForm(props) {
   const [values, setValues] = useState(initialFormValues)
   const navigate = useNavigate()
   // ✨ where are my props? Destructure them here
-  props = {values}
+  const {login} = props
 
   const onChange = evt => {
     const { id, value } = evt.target
@@ -23,13 +23,7 @@ export default function LoginForm(props) {
   const onSubmit = evt => {
     evt.preventDefault()
     // ✨ implement
-    axiosWithAuth().post('/login', values)
-    .then(res => {
-      localStorage.setItem('token', res.data.token)
-      console.log('LoginForm onSubmit', res)
-      navigate(`/articles`)
-    })
-    .catch(err => {console.log(err)})
+    login(values)
   }
 
   const isDisabled = () => {

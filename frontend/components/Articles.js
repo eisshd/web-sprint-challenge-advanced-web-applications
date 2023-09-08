@@ -7,48 +7,21 @@ import axiosWithAuth from '../axios'
 
 export default function Articles(props) {
   // ✨ where are my props? Destructure them here
-  const [articles, setArticles] = useState([])
-  props = {articles}
+  const {getArticles, deleteArticle, articles, setCurrentArticleId, currentArticleId, currentArticle, setCurrentArticle} = props
   // ✨ implement conditional logic: if no token exists
   // we should render a Navigate to login screen (React Router v.6)
-  const navigate = useNavigate()
-  const redirectToLogin = () => { navigate('/') }
-  const redirectToArticles = () => { navigate('/articles') }
-
+ 
   useEffect(() => {
     // ✨ grab the articles here, on first render only
-    axiosWithAuth()
-    .get('/articles')
-    .then(res => {
-      console.log('Articles - useEffect - success')
-      setArticles(res.data.articles)
-    })
-    .catch(err => {
-      console.log('Articles - useEffect - failure')
-      redirectToLogin
-    })
+    getArticles()
   }, [])
 
-  const onClickEdit = (article_id, topic) => {
-    axiosWithAuth().put(`http://localhost:9000/api/articles/${article_id}`, topic)
-         .then(res => {
-          console.log(res)
-        })
-         .catch(err => {
-          console.log(err)
-        })
+  const onClickEdit = (id) => {
+      setCurrentArticleId(id)
   }
 
   const onClickDelete = (id) => {
-    axiosWithAuth().delete(`http://localhost:9000/api/articles/${id}`)
-                   .then(res => {
-                    console.log(res)
-                    window.location.reload()
-                  })
-                   .catch(err => {
-                    console.log(err.response.data.message)
-                    window.location.reload()
-                  })
+        deleteArticle(id)
   }
 
   return (
@@ -68,7 +41,7 @@ export default function Articles(props) {
                   <p>Topic: {art.topic}</p>
                 </div>
                 <div>
-                  <button disabled={false} onClick={e => onClickEdit(art.article_id, art.topic)}>Edit</button>
+                  <button disabled={false} onClick={e => onClickEdit(art.article_id)}>Edit</button>
                   <button disabled={false} onClick={e => onClickDelete(art.article_id)}>Delete</button>
                 </div>
               </div>

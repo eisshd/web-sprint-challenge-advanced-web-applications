@@ -8,34 +8,30 @@ const initialFormValues = { title: '', text: '', topic: '' }
 
 export default function ArticleForm(props) {
   const [values, setValues] = useState(initialFormValues)
-  const [currentArticle, setCurrentArticle] = useState([])
-  const navigate = useNavigate()
-  const redirectToLogin = () => { navigate('/') }
-  const redirectToArticles = () => { navigate('/articles') }
   // ✨ where are my props? Destructure them here
-  props = {values, currentArticle}
+  const {postArticle, updateArticle, setCurrentArticleId, currentArticleId, currentArticle, setCurrentArticle} = props
   useEffect(() => {
     // ✨ implement
     // Every time the `currentArticle` prop changes, we should check it for truthiness:
     // if it's truthy, we should set its title, text and topic into the corresponding
     // values of the form. If it's not, we should reset the form back to initial values.
+    currentArticleId != undefined 
+    ? axiosWithAuth().put(`/articles/${currentArticleId}`, values)
+      .then(res => {setValues(res.data)})
+      .catch(err => {err.response.data.message})
+    : console.log(false)
   })
  
   const onChange = evt => {
     const { id, value } = evt.target
     setValues({ ...values, [id]: value })
-    console.log(values)
   }
 
   const onSubmit = evt => {
     // ✨ implement
     // We must submit a new post or update an existing one,
-    axiosWithAuth().post('/articles', values)
-         .then(res => {
-          res.data.article
-          setValues(initialFormValues)
-        })
     // depending on the truthyness of the `currentArticle` prop.
+    postArticle(values)
   }
 
   const isDisabled = () => {
