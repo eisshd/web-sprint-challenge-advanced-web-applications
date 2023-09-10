@@ -17,7 +17,17 @@ export default function Articles(props) {
   }, [])
 
   const onClickEdit = (id) => {
-      setCurrentArticleId(id)
+    setCurrentArticleId(id)
+    const current = articles.filter(article => article.article_id === id)
+    console.log(current[0])
+    setCurrentArticle(current[0])
+  //   axiosWithAuth().put(`/articles/${id}`, currentArticle)
+  //   .then(res => {
+  //    setCurrentArticle(res.data)
+  //    console.log(res.data)
+  //  })
+  //   .catch(err => console.log(err))
+  
   }
 
   const onClickDelete = (id) => {

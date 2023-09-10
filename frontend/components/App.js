@@ -104,19 +104,15 @@ export default function App() {
     })
   }
 
-  const updateArticle = ({ article_id, article }) => {
+  const updateArticle = ( article_id, article ) => {
     // ✨ implement
     // You got this!
+    console.log('updateArticle', article_id, article)
     axiosWithAuth().put(`/articles/${article_id}`, article)
     .then(res => {
+      setMessage(res.data.message)
       setCurrentArticle(res.data)
     })
-  //   axiosWithAuth().put(`/articles/${id}`, currentArticle)
-  //   .then(res => {
-  //    setCurrentArticle(res.data)
-  //    console.log(res.data)
-  //  })
-  //   .catch(err => console.log(err))
 }
 
   const deleteArticle = article_id => {
@@ -124,6 +120,7 @@ export default function App() {
     axiosWithAuth().delete(`/articles/${article_id}`)
       .then(res => {
         setMessage(res.data.message)
+        setArticles(articles.filter(article => article.article_id != article_id))
       })
       .catch(err => {
         console.log(err.response.data.message)
