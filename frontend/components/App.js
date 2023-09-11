@@ -32,7 +32,6 @@ export default function App() {
      localStorage.removeItem('token')
      setMessage('Goodbye!')
      redirectToLogin()
-     console.log("logout")
 
   }
 
@@ -45,7 +44,6 @@ export default function App() {
     // put the server success message in its proper state,
     // and redirect to the Articles screen. 
     // Don't forget to turn off the spinner!
-    console.log('login')
     const login = {username, password}
     setMessage('')
     setSpinnerOn(true)
@@ -54,9 +52,9 @@ export default function App() {
       localStorage.setItem('token', res.data.token)  
       setMessage(res.data.message)
       redirectToArticles()
-      setSpinnerOn(false)
     })
     .catch(err => console.log(err))
+    setSpinnerOn(false)
   }
 
   const getArticles = () => {
@@ -73,7 +71,6 @@ export default function App() {
     setSpinnerOn(true)
     axiosWithAuth().get('/articles')
     .then(res => {
-    console.log('getArticles')
     setArticles(res.data.articles)  
     setMessage(res.data.message)
     })
@@ -85,38 +82,46 @@ export default function App() {
     
   }
 
-  const postArticle = article => {
+  const postArticle = async (article) => {
     // ✨ implement
     // The flow is very similar to the `getArticles` function.
     // You'll know what to do! Use log statements or breakpoints
     // to inspect the response from the server.
     setMessage('')
     setSpinnerOn(true)
-    axiosWithAuth().post('/articles', article)
+    await axiosWithAuth().post('/articles', article)
     .then(res => {
-    console.log('postArticle')
-    setArticles(res.data.articles)  
+    res.data.article
     setMessage(res.data.message)
-    setSpinnerOn(false)
     })
     .catch(err => {
-      console.log(err)
+      console.log(err.response.data.message)
     })
+    setSpinnerOn(false)
+    
+
+    axiosWithAuth().get('/articles').then(res => setArticles(res.data.articles))
   }
 
-  const updateArticle = ( article_id, article ) => {
+  const updateArticle = async (article_id, article) => {
     // ✨ implement
     // You got this!
-    console.log('updateArticle', article_id, article)
-    axiosWithAuth().put(`/articles/${article_id}`, article)
-    .then(res => {
+    setSpinnerOn(true)
+    setMessage('')
+    await axiosWithAuth().put(`/articles/${article_id}`, article)
+    .then(res => {      
+      setCurrentArticle(res.data.article)
       setMessage(res.data.message)
-      setCurrentArticle(res.data)
     })
+    .catch(err => {err.response.data.message})
+    .finally(() => setCurrentArticle(undefined))
+    axiosWithAuth().get('/articles').then(res => setArticles(res.data.articles))
+    setSpinnerOn(false)
 }
 
   const deleteArticle = article_id => {
     // ✨ implement
+    setSpinnerOn(true)
     axiosWithAuth().delete(`/articles/${article_id}`)
       .then(res => {
         setMessage(res.data.message)
@@ -125,6 +130,7 @@ export default function App() {
       .catch(err => {
         console.log(err.response.data.message)
       })
+      setSpinnerOn(false)
   }
 
   return (
